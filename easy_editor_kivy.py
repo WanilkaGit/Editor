@@ -60,30 +60,19 @@ class EditorScreen(Screen):
         file_chooser.on_submit = self.setWorkdir
         popup.open()
         self.popup = popup
-
-    def setWorkdir(self, instance, value, is_touch):
-        if value:
-            path = value
-            if os.path.isdir(path):
-                EditorScreen.selected_dir = path
-                self.showFileNamesList()
+        
+    def setWorkdir(self, instance, value):
+        if value is not None:
+            path = value[0]
+            if path and os.path.exists(path):
+                if os.path.isdir(path):
+                    EditorScreen.selected_dir = path
+                    self.showFileNamesList()
+                else:
+                    print("Ви обрали файл:", path)
             else:
-                print("Ви обрали файл:", path)
+                print("Шлях не існує:", path)
         self.popup.dismiss()
-
-
-    def filter(self, files, extensions):
-        result = []
-        for filename in files:
-            for ext in extensions:
-                if filename.endswith(ext):
-                    result.append(filename)
-        return result
-
-    def showFileNamesList(self):
-        extensions = [".jpg", ".png", ".jpeg", ".bmp", ".gif", ".PNG"]
-        filenames = self.filter(os.listdir(EditorScreen.selected_dir), extensions)
-        self.list_files.data = [{'text': filename} for filename in filenames]
 
 
 class HeartCheck(App):
